@@ -32,6 +32,7 @@ public void run(){
 		turnLeft();turnLeft();
 		if(remainder == 1) move();
 		for(int x =0;x<midpoint-1;x++) move();
+		putBeeper();
 }
 	
 }
