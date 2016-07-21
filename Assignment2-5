@@ -1,0 +1,22 @@
+/*
+ * File: PythagoreanTheorem.java
+ * This file is the starter file for the PythagoreanTheorem problem.
+ */
+
+import acm.program.*;
+import acm.gui.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class PythagoreanTheorem extends ConsoleProgram {
+	public void run() {
+		println("Enter values to compute the Pythagorean theorem");
+		double userA = readDouble("Enter a: ");
+		double userB = readDouble("Enter b: ");
+		userA = Math.pow(userA, 2);
+		userB = Math.pow(userB, 2);
+		double sumOfSquares = userA + userB;
+		double calculation = Math.sqrt(sumOfSquares);
+		println("c = "+calculation);
+	}
+}
