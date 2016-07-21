@@ -1,0 +1,28 @@
+/*
+ * File: Target.java
+ * Name: 
+ * Section Leader: 
+ * -----------------
+ * This file is the starter file for the Target problem.
+ */
+
+import acm.graphics.*;
+import acm.program.*;
+import java.awt.*;
+
+
+public class Target extends GraphicsProgram {	
+	public void run() {
+		double xMid = getWidth()/2;
+		double yMid = getHeight()/2;
+		circleMaker(xMid, yMid, 72, 72, Color.RED);
+		circleMaker(xMid, yMid, 46.8, 46.8, Color.WHITE);
+		circleMaker(xMid, yMid, 21.6, 21.6, Color.RED);
+	}
+	private void circleMaker(double xMid, double yMid, double x, double y, Color a){
+		GOval circle = new GOval(xMid-x,yMid-y,x*2,y*2);
+		circle.setFilled(true);
+		circle.setColor(a);
+		add(circle);
+	}
+}
