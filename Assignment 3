@@ -100,7 +100,7 @@ public class Breakout extends GraphicsProgram {
 						break;
 					}
 					//incremental movement
-					if(moverCounter < 60){
+					if(moverCounter < 105){
 						ballMover();
 					}
 					else{
@@ -109,7 +109,7 @@ public class Breakout extends GraphicsProgram {
 					
 					collision();
 					moverCounter++;
-					
+					pause(10);
 				}
 				break;
 			}
@@ -124,8 +124,6 @@ public class Breakout extends GraphicsProgram {
 		//x and y are coordinates of the ball. if the point (x,y) is underneath an object, this 
 		//call returns the grpahical object with which the ball has collided. 
 		//If there are no objects at the point (x,y), you'll get the value null.
-		
-		
 		//call the four points of the ball (corners of the square)
 	//	private GObject getCollidingObject(); 
 		//GObject collider = getCollidingObject();
@@ -135,18 +133,20 @@ public class Breakout extends GraphicsProgram {
 	//	if(collider == brick){
 	//		remove(brick);
 	//	}
-	//	if(collider == bottomwall){
-	//		
-	//	}
-	//	if(numBricks == 0){
-	//		//stop ball end program?
-	//		//flash win screen
-	//	}
+	
 	}
 	private void collision() {
 		
 		double ballXLoc = ball.getX();
 		double ballYLoc = ball.getY();//remmeber this is the top left hand corner
+		if(ballYLoc == HEIGHT){
+			vy = -vy;
+			System.out.println("Ive hit the top");
+		}
+		if(ballXLoc == WIDTH || ballXLoc == 0 || ballXLoc + 20 == WIDTH || ballXLoc + 20 == 0){
+			vx = -vx;
+			System.out.println("Ive hit the sides");
+		}
 		//our points areeeee
 		//(X,Y)topL, (X,Y+Diam)botL, (X+Diam, Y)topR, (X+Diam, Y+Diam) botR, (X+rad,Y) north, (X+Diam,Y+rad) east, (X+rad,Y+diam) south, (X, Y+rad) west
 	}
@@ -173,11 +173,12 @@ public class Breakout extends GraphicsProgram {
 		//formula for x distance  based on x velocity y distance based on y velocity
 		//distance = velocity * time
 		//what's a good velocity?
-		RandomGenerator rgenX = RandomGenerator.getInstance();
-		vx = rgenX.nextDouble(1.0, 3.0);
-		if(rgenX.nextBoolean(0.5)) vx = -vx;
-		RandomGenerator rgenY = RandomGenerator.getInstance();
-		vy = rgenY.nextDouble(1.0, 3.0);
+		//RandomGenerator rgenX = RandomGenerator.getInstance();
+		//vx = rgenX.nextDouble(1.0, 3.0);
+		//if(rgenX.nextBoolean(0.5)) vx = -vx;
+		//RandomGenerator rgenY = RandomGenerator.getInstance();
+		//vy = rgenY.nextDouble(1.0, 3.0);
+		vx = 2.0; vy=2.0;
 		ball.move((vx*1),(-vy*1));
 		//System.out.println("ball x and y are"+ball.getX()+"and "+ball.getY());
 		
