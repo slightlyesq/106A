@@ -1,0 +1,191 @@
+/*
+ * File: Breakout.java
+ * -------------------
+ * Name:
+ * Section Leader:
+ * 
+ * This file will eventually implement the game of Breakout.
+ */
+
+import acm.graphics.*;
+import acm.program.*;
+import acm.util.*;
+import java.applet.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Breakout extends GraphicsProgram {
+/* test */
+/** double test */
+	private GRect paddle;
+	private double lastX;
+	private double lastY;
+	private GOval ball;
+	private double vx;
+	private double vy;
+/** Width and height of application window in pixels */
+	public static final int APPLICATION_WIDTH = 400;
+	public static final int APPLICATION_HEIGHT = 600;
+
+/** Dimensions of game board (usually the same) */
+	private static final int WIDTH = APPLICATION_WIDTH;
+	private static final int HEIGHT = APPLICATION_HEIGHT;
+
+/** Dimensions of the paddle */
+	private static final int PADDLE_WIDTH = 60;
+	private static final int PADDLE_HEIGHT = 10;
+
+/** Offset of the paddle up from the bottom */
+	private static final int PADDLE_Y_OFFSET = 30;
+
+/** Number of bricks per row */
+	private static final int NBRICKS_PER_ROW = 10;
+
+/** Number of rows of bricks */
+	private static final int NBRICK_ROWS = 10;
+
+/** Separation between bricks */
+	private static final int BRICK_SEP = 4;
+
+/** Width of a brick */
+	private static final int BRICK_WIDTH =
+	  (WIDTH - (NBRICKS_PER_ROW - 1) * BRICK_SEP) / NBRICKS_PER_ROW;
+	//(400 - (10 - 1) * 4) / 10 => (400-36)/10 = 364 = 36
+	//360 + 4*9 = 396
+/** Height of a brick */
+	private static final int BRICK_HEIGHT = 8;
+
+/** Radius of the ball in pixels */
+	private static final int BALL_RADIUS = 10;
+
+/** Offset of the top brick row from the top */
+	private static final int BRICK_Y_OFFSET = 70;
+
+/** Number of turns */
+	private static final int NTURNS = 3;
+	int counter = 0;
+	boolean mouseClicked = false;
+/** Runs the Breakout program. */
+	public void init() {
+		System.out.println("inside init and counter "+counter);
+		addMouseListeners();
+		//counter++;
+		//addKeyListeners();
+		paddle = new GRect((400/2)-30,600-10,60,10);
+		paddle.setFilled(true);
+		paddle.setFillColor(Color.BLACK);
+		add(paddle);
+		ball = new GOval((400/2)-155,600-10-20,20,20);//blerg remember oval is set by top left so thi
+		//is currently wrong ^^
+		ball.setFilled(true);
+		ball.setFillColor(Color.BLACK);
+		add(ball);
+		double yCoord = 80;
+		/**nested loop to create the bricks**/
+		for(int y = 0;y<10;y++){
+			//double xCoord = 400;
+			double xCoord = 2;
+			double newYCoord = yCoord - (8*y);
+			for(int x = 0;x<10;x++){
+				rectMaker(xCoord,newYCoord,y);
+				xCoord = xCoord + BRICK_WIDTH + BRICK_SEP;
+				//xCoord = xCoord - BRICK_WIDTH - BRICK_SEP;
+			}
+		}
+		launchBall();
+	}
+	public void run() {
+		while(true){
+			//check for collision
+			
+		}
+		//setup
+		
+		//vx = velocity in x direction, vy = velocity in y direction
+		
+		
+		//private RandomGenerator rgen = RandomGenerator.getInstance();
+		//vx = rgen.nextDouble(1.0, 3.0);
+		//if(rgen.nextBoolean(0.5)) vx = -vx;
+		//sets vx to be a random double in the range 1.0 to 3.0 and then makes it negative half the time
+		//
+		
+		//waitForClick();
+		//if a ball bounces off the top or bottom wall, all you need to do is reverse the sign of vy.
+		//bounces off the side walls simply reverse the sign of vx
+		//public GObject getElementAt(double x, double y);
+		//x and y are coordinates of the ball. if the point (x,y) is underneath an object, this 
+		//call returns the grpahical object with which the ball has collided. 
+		//If there are no objects at the point (x,y), you'll get the value null.
+		
+		
+		//call the four points of the ball (corners of the square)
+	//	private GObject getCollidingObject(); 
+		//GObject collider = getCollidingObject();
+		//if(collider == paddle){
+	//		
+	//	}
+	//	if(collider == brick){
+	//		remove(brick);
+	//	}
+	//	if(collider == bottomwall){
+	//		
+	//	}
+	//	if(numBricks == 0){
+	//		//stop ball end program?
+	//		//flash win screen
+	//	}
+	}
+	
+	public void mouseClicked(MouseEvent e){
+		if(mouseClicked == false){
+			launchBall();
+		}
+		mouseClicked = true;
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+		if(mouseClicked == true){
+			lastX = paddle.getX();
+			lastY = paddle.getY();
+			if(lastX+(e.getX() - lastX) <= 340){//make sure we stay in window
+				paddle.move(e.getX() - lastX, 0);
+			}
+		}
+	}
+	
+	private void launchBall(){
+		//do i need this? or is it just a while loop during run?
+		ball.move();
+	}
+	
+	private void rectMaker(double x, double y, int yRowNum){
+		GRect rect = new GRect(x, y, BRICK_WIDTH, BRICK_HEIGHT);
+		rect.setFilled(true);
+		if(yRowNum == 99){
+			rect.setFillColor(Color.BLACK);
+		}
+		if(yRowNum < 2){
+			rect.setFillColor(Color.CYAN);
+		}
+		
+		else if(yRowNum < 4){
+			rect.setFillColor(Color.GREEN);
+		}
+		
+		else if(yRowNum < 6){
+			rect.setFillColor(Color.YELLOW);
+		}
+		
+		else if(yRowNum < 8){
+			rect.setFillColor(Color.ORANGE);
+		}
+		
+		else{
+			rect.setFillColor(Color.RED);
+		}
+		
+		add(rect);
+	}
+
+}
