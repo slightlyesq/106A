@@ -18,6 +18,7 @@ public class Breakout extends GraphicsProgram {
 /* test */
 /** double test */
 	private GRect paddle;
+	private GObject gobj;
 	private double lastX;
 	private double lastY;
 	private GOval ball;
@@ -67,6 +68,7 @@ public class Breakout extends GraphicsProgram {
 	int brickCounter = 100;
 	int moverCounter = 0;
 /** Runs the Breakout program. */
+	
 	public void init() {
 		//System.out.println("inside init and counter "+counter);
 		addMouseListeners();
@@ -74,24 +76,26 @@ public class Breakout extends GraphicsProgram {
 		paddle.setFilled(true);
 		paddle.setFillColor(Color.BLACK);
 		add(paddle);
-		ball = new GOval(WIDTH/2 - BALL_RADIUS,HEIGHT-PADDLE_HEIGHT-BALL_RADIUS*2,BALL_RADIUS*2,BALL_RADIUS*2);
-		ball.setFilled(true);
-		ball.setFillColor(Color.BLACK);
-		add(ball);
+		
 		double yCoord = 80;
 		/**nested loop to create the bricks**/
 		for(int y = 0;y<10;y++){
-			//double xCoord = 400;
 			double xCoord = 2;
 			double newYCoord = yCoord - (8*y);
 			for(int x = 0;x<10;x++){
 				rectMaker(xCoord,newYCoord,y);
 				xCoord = xCoord + BRICK_WIDTH + BRICK_SEP;
-				//xCoord = xCoord - BRICK_WIDTH - BRICK_SEP;
 			}
 		}
+		ball = new GOval(WIDTH/2 - BALL_RADIUS,HEIGHT-PADDLE_HEIGHT-BALL_RADIUS*2,BALL_RADIUS*2,BALL_RADIUS*2);
+		ball.setFilled(true);
+		ball.setFillColor(Color.BLACK);
+		add(ball);
+		ball.sendToBack();
 	}
+	
 	public void run() {
+		
 		while(true){
 			if(mouseClicked == true){
 				System.out.println("I'm in the run behind the bool");
@@ -100,7 +104,7 @@ public class Breakout extends GraphicsProgram {
 						break;
 					}
 					//incremental movement
-					if(moverCounter < 105){
+					if(moverCounter < 250){
 						ballMover();
 					}
 					else{
@@ -117,36 +121,86 @@ public class Breakout extends GraphicsProgram {
 		
 		
 		
-		//waitForClick();
-		//if a ball bounces off the top or bottom wall, all you need to do is reverse the sign of vy.
+		
+		/**if a ball bounces off the top or bottom wall, all you need to do is reverse the sign of vy.
 		//bounces off the side walls simply reverse the sign of vx
 		//public GObject getElementAt(double x, double y);
 		//x and y are coordinates of the ball. if the point (x,y) is underneath an object, this 
 		//call returns the grpahical object with which the ball has collided. 
 		//If there are no objects at the point (x,y), you'll get the value null.
-		//call the four points of the ball (corners of the square)
-	//	private GObject getCollidingObject(); 
+		**///call the four points of the ball (corners of the square)
+		//	private GObject getCollidingObject(); 
 		//GObject collider = getCollidingObject();
 		//if(collider == paddle){
-	//		
-	//	}
-	//	if(collider == brick){
-	//		remove(brick);
-	//	}
 	
 	}
+	
 	private void collision() {
 		
-		double ballXLoc = ball.getX();
-		double ballYLoc = ball.getY();//remmeber this is the top left hand corner
-		if(ballYLoc == HEIGHT){
+		double ballXNLoc = ball.getX() + BALL_RADIUS; double ballXELoc = ball.getX() + 2*BALL_RADIUS; double ballXSLoc = ballXNLoc; double ballXWLoc = ball.getX();
+		double ballYNLoc = ball.getY(); double ballYELoc = ball.getY()+BALL_RADIUS; double ballYSLoc = ball.getY()+2*BALL_RADIUS; double ballYWLoc = ballYELoc;//remmeber this is the top left hand corner
+		
+		
+		
+		//presumably getElementAt returns the top z order so need to bring all the bricks to the front....but not all the bricks can be on
+		//the top? so i guess i just move oval and paddle to back....
+		//twiddle
+		//move bricks to front 
+		//no just oval to back...
+		gobj = getElementAt(ballXNLoc, ballYNLoc);
+		if(gobj != null && gobj.getClass() != ball.getClass()) {//this checks for a collision at the top left hand corner of the rectangle the GOval is
+			System.out.println("am i in any of these");
+			remove(gobj);
+			vy = -vy;
+			return;
+		}
+		gobj = getElementAt(ballXELoc, ballYELoc);
+		if(gobj  != null && gobj.getClass() != ball.getClass()) {
+			System.out.println("am i in any of these");
+			remove(gobj);
+			vx = -vx;
+			return;
+		}
+		gobj = getElementAt(ballXSLoc, ballYSLoc);
+		if(gobj != null && gobj.getClass() != ball.getClass()) {
+			System.out.println("am i in any of these");
+			remove(gobj);
+			vy = -vy;
+			return;
+		}
+		gobj = getElementAt(ballXWLoc, ballYWLoc);
+		if(gobj != null && gobj.getClass() != ball.getClass()) {
+			System.out.println("am i in any of these");
+			remove(gobj);
+			vx = -vx;
+			return;
+		}
+		
+		
+		
+		
+		//WHATEVER loop through the 4 corners and then whenever one is not equal to null apply appropriate velocity change
+		
+			
+			//collision has occurred
+			//remove brick
+			//change velocity based on where collision occurred; if collision is: N(vx, -vy) E(-vx, vy) S(vx, -vy) W(-vx, vy)
+			//velocity change continued...twiddle
+			
+			
+		
+		
+		if(ballYNLoc == HEIGHT){
 			vy = -vy;
 			System.out.println("Ive hit the top");
 		}
-		if(ballXLoc == WIDTH || ballXLoc == 0 || ballXLoc + 20 == WIDTH || ballXLoc + 20 == 0){
+		//if(ballXELoc == WIDTH || ballXWLoc == 0 || ballXLoc + 20 == WIDTH || ballXLoc + 20 == 0){
+		if(ballXELoc == WIDTH || ballXWLoc == 0){
 			vx = -vx;
 			System.out.println("Ive hit the sides");
 		}
+		return;
+		
 		//our points areeeee
 		//(X,Y)topL, (X,Y+Diam)botL, (X+Diam, Y)topR, (X+Diam, Y+Diam) botR, (X+rad,Y) north, (X+Diam,Y+rad) east, (X+rad,Y+diam) south, (X, Y+rad) west
 	}
@@ -169,10 +223,6 @@ public class Breakout extends GraphicsProgram {
 	
 	private void launchBall() {
 		
-		//do i need this? or is it just a while loop during run?
-		//formula for x distance  based on x velocity y distance based on y velocity
-		//distance = velocity * time
-		//what's a good velocity?
 		//RandomGenerator rgenX = RandomGenerator.getInstance();
 		//vx = rgenX.nextDouble(1.0, 3.0);
 		//if(rgenX.nextBoolean(0.5)) vx = -vx;
@@ -180,13 +230,12 @@ public class Breakout extends GraphicsProgram {
 		//vy = rgenY.nextDouble(1.0, 3.0);
 		vx = 2.0; vy=2.0;
 		ball.move((vx*1),(-vy*1));
-		//System.out.println("ball x and y are"+ball.getX()+"and "+ball.getY());
 		
 	}
 	
 	private void ballMover() {
 		ball.move(vx*1,-vy*1);
-		System.out.println(moverCounter);
+		//System.out.println(moverCounter);
 	}
 	
 	private void rectMaker(double x, double y, int yRowNum){
