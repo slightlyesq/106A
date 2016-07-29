@@ -72,10 +72,8 @@ public class Breakout extends GraphicsProgram {
 	public void init() {
 		//System.out.println("inside init and counter "+counter);
 		addMouseListeners();
-		paddle = new GRect((400/2)-30,600-10,60,10);
-		paddle.setFilled(true);
-		paddle.setFillColor(Color.BLACK);
-		add(paddle);
+		paddleMaker();
+		System.out.println("HOW MANY TIMES IS INIT CALLED");
 		
 		double yCoord = 80;
 		/**nested loop to create the bricks**/
@@ -95,7 +93,6 @@ public class Breakout extends GraphicsProgram {
 	}
 	
 	public void run() {
-		
 		while(true){
 			if(mouseClicked == true){
 				System.out.println("I'm in the run behind the bool");
@@ -104,13 +101,15 @@ public class Breakout extends GraphicsProgram {
 						break;
 					}
 					//incremental movement
-					if(moverCounter < 250){
+					/*
+					if(moverCounter < 1000){
 						ballMover();
 					}
 					else{
 						break;
 					}
-					
+					*/
+					ballMover();
 					collision();
 					moverCounter++;
 					pause(10);
@@ -118,35 +117,22 @@ public class Breakout extends GraphicsProgram {
 				break;
 			}
 		}
-		
-		
-		
-		
+		//I could remove the ball and paddle and println("you win!");
 		/**if a ball bounces off the top or bottom wall, all you need to do is reverse the sign of vy.
 		//bounces off the side walls simply reverse the sign of vx
 		//public GObject getElementAt(double x, double y);
 		//x and y are coordinates of the ball. if the point (x,y) is underneath an object, this 
 		//call returns the grpahical object with which the ball has collided. 
 		//If there are no objects at the point (x,y), you'll get the value null.
-		**///call the four points of the ball (corners of the square)
-		//	private GObject getCollidingObject(); 
-		//GObject collider = getCollidingObject();
-		//if(collider == paddle){
-	
+		**/
 	}
 	
 	private void collision() {
 		
 		double ballXNLoc = ball.getX() + BALL_RADIUS; double ballXELoc = ball.getX() + 2*BALL_RADIUS; double ballXSLoc = ballXNLoc; double ballXWLoc = ball.getX();
 		double ballYNLoc = ball.getY(); double ballYELoc = ball.getY()+BALL_RADIUS; double ballYSLoc = ball.getY()+2*BALL_RADIUS; double ballYWLoc = ballYELoc;//remmeber this is the top left hand corner
+		//okay i need the points for the other parts of the ball, NW NE SE SW
 		
-		
-		
-		//presumably getElementAt returns the top z order so need to bring all the bricks to the front....but not all the bricks can be on
-		//the top? so i guess i just move oval and paddle to back....
-		//twiddle
-		//move bricks to front 
-		//no just oval to back...
 		gobj = getElementAt(ballXNLoc, ballYNLoc);
 		if(gobj != null && gobj.getClass() != ball.getClass()) {//this checks for a collision at the top left hand corner of the rectangle the GOval is
 			System.out.println("am i in any of these");
@@ -154,6 +140,7 @@ public class Breakout extends GraphicsProgram {
 			vy = -vy;
 			return;
 		}
+		
 		gobj = getElementAt(ballXELoc, ballYELoc);
 		if(gobj  != null && gobj.getClass() != ball.getClass()) {
 			System.out.println("am i in any of these");
@@ -161,13 +148,20 @@ public class Breakout extends GraphicsProgram {
 			vx = -vx;
 			return;
 		}
+		
 		gobj = getElementAt(ballXSLoc, ballYSLoc);
+		if(gobj != null && gobj.getWidth() == PADDLE_WIDTH){
+			//paddle bounce
+			vy = -vy;
+			return;
+		}
 		if(gobj != null && gobj.getClass() != ball.getClass()) {
 			System.out.println("am i in any of these");
 			remove(gobj);
 			vy = -vy;
 			return;
 		}
+		
 		gobj = getElementAt(ballXWLoc, ballYWLoc);
 		if(gobj != null && gobj.getClass() != ball.getClass()) {
 			System.out.println("am i in any of these");
@@ -176,35 +170,47 @@ public class Breakout extends GraphicsProgram {
 			return;
 		}
 		
-		
-		
-		
 		//WHATEVER loop through the 4 corners and then whenever one is not equal to null apply appropriate velocity change
 		
-			
-			//collision has occurred
-			//remove brick
-			//change velocity based on where collision occurred; if collision is: N(vx, -vy) E(-vx, vy) S(vx, -vy) W(-vx, vy)
-			//velocity change continued...twiddle
-			
-			
-		
-		
+		/**handles wall bouncing
+		 */
 		if(ballYNLoc == HEIGHT){
 			vy = -vy;
 			System.out.println("Ive hit the top");
 		}
+		
 		//if(ballXELoc == WIDTH || ballXWLoc == 0 || ballXLoc + 20 == WIDTH || ballXLoc + 20 == 0){
 		if(ballXELoc == WIDTH || ballXWLoc == 0){
 			vx = -vx;
 			System.out.println("Ive hit the sides");
 		}
+		if(ballYNLoc == 0){
+			vy = -vy;
+		}
+		if(ballYSLoc == 600){
+			//reset ball to start at paddle
+			//increment turn counter
+			System.out.println("AM I AT THE BOTTOM?");
+			mouseClicked = false;
+			
+			paddle.setLocation((WIDTH/2)-(PADDLE_WIDTH/2),HEIGHT-PADDLE_HEIGHT);
+			ball.setLocation(WIDTH/2 - BALL_RADIUS,HEIGHT-PADDLE_HEIGHT-BALL_RADIUS*2);
+			vx=0;
+			vy=0;
+		}
+		
 		return;
 		
-		//our points areeeee
 		//(X,Y)topL, (X,Y+Diam)botL, (X+Diam, Y)topR, (X+Diam, Y+Diam) botR, (X+rad,Y) north, (X+Diam,Y+rad) east, (X+rad,Y+diam) south, (X, Y+rad) west
 	}
-	public void mouseClicked(MouseEvent e){
+	public void paddleMaker() {
+		paddle = new GRect((WIDTH/2)-(PADDLE_WIDTH/2),HEIGHT-PADDLE_HEIGHT,PADDLE_WIDTH,PADDLE_HEIGHT);
+		paddle.setFilled(true);
+		paddle.setFillColor(Color.BLACK);
+		add(paddle);
+	}
+	public void mouseClicked(MouseEvent e) {
+		System.out.println("Is this being called even though mouse was not repeatedly clicked?");
 		if(mouseClicked == false){
 			launchBall();
 		}
@@ -235,7 +241,6 @@ public class Breakout extends GraphicsProgram {
 	
 	private void ballMover() {
 		ball.move(vx*1,-vy*1);
-		//System.out.println(moverCounter);
 	}
 	
 	private void rectMaker(double x, double y, int yRowNum){
